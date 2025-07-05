@@ -50,27 +50,24 @@ local TALENT_BACKGROUNDS = {
 	"WarriorArms", "WarriorFury", "WarriorProtection",
 };
 
--- Options
+-- Options Table
 ex.options = {
 	{ var = "makeMovable", default = false, label = "Make Examiner Movable", tip = "To freely move Examiner around, enable this option, otherwise it will behave like a normal frame, such as the Quest Log or Spellbook" },
 	{ var = "autoInspect", default = true, label = "Auto Inspect on Target Change", tip = "With this option turned on, Examiner will automatically inspect your new target when you change it." },
 	{ var = "clearInspectOnHide", default = false, label = "Clear Inspect Data on Hide", tip = "When Examiner gets hidden, this option will clear inspection data, thus freeing up some memory." },
-	-- { var = "percentRatings", default = false, label = "Show Ratings in Percentage *", tip = "* = Not working in WoD.\nWith this option enabled, ratings will be displayed in percent relative to the inspected person's level." },
-	{ var = "combineAdditiveStats", default = true, label = "Combine Additive Stats", tip = "This option will combine certain stats which stacks with others.\n- Spell Power to specific schools\n- Intellect to Spell Power\n- AP to Ranged AP" },
+	{ var = "percentRatings", default = true, label = "Show Ratings in Percentage", tip = "With this option enabled, ratings will be displayed in percent relative to the inspected person's level." },
+	{ var = "combineAdditiveStats", default = true, label = "Combine Additive Stats", tip = "This option will combine certain stats which stack with others.\n- Spell Power to specific schools\n- Intellect to Spell Power\n- AP to Ranged AP" },
 	{ var = "tooltipSmartAnchor", default = false, label = "Fixed Tooltip Anchor", tip = "Instead of showing item tooltips next to the item button, it will place it next to the Examiner window, in a fixed position" },
 };
 
--- Binding Name
+-- Key Bindings
 BINDING_HEADER_EXAMINER = modName;
-BINDING_NAME_EXAMINER_OPEN = "Open "..modName;
-BINDING_NAME_EXAMINER_TARGET = INSPECT.." "..TARGET;
-BINDING_NAME_EXAMINER_MOUSEOVER = INSPECT.." Mouseover";
+BINDING_NAME_EXAMINER_OPEN = "Open " .. modName;
+BINDING_NAME_EXAMINER_TARGET = INSPECT .. " " .. TARGET;
+BINDING_NAME_EXAMINER_MOUSEOVER = INSPECT .. " Mouseover";
 
--- Allow Inspect from Any Range -- This was apparently causing TAINT, so it has now been disabled.
---UnitPopupButtons.INSPECT.dist = 0;
--- UIPanelWindow Entry  -- Az: Can this cause TAINT?
+-- Frame Registration
 UIPanelWindows[modName] = { area = "left", pushable = 1, whileDead = 1 };
--- Allows the use of Esc to close the window -- Az: Can this cause TAINT? Many other addons uses this, so probably no?
 UISpecialFrames[#UISpecialFrames + 1] = modName;
 
 --------------------------------------------------------------------------------------------------------
@@ -96,21 +93,22 @@ local function Examiner_OnHide(self)
 	self:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:UnregisterEvent("UNIT_INVENTORY_CHANGED");
 	self:UnregisterEvent("MODIFIER_STATE_CHANGED");
+
 	if (cfg.clearInspectOnHide) then
 		ex:ClearInspect();
 	else
-		self:SetScript("OnUpdate",nil);
+		self:SetScript("OnUpdate", nil);
 	end
 end
 
--- OnUpdate -- Only used for units outside inspect range
-local function Examiner_OnUpdate(self,elapsed)
-	if (self:ValidateUnit()) and (CheckInteractDistance(self.unit,3)) then
+-- OnUpdate (used for units outside inspect range)
+local function Examiner_OnUpdate(self, elapsed)
+	if (self:ValidateUnit()) and (CheckInteractDistance(self.unit, 3)) then
 		self:DoInspect(self.unit);
-		-- We do another inspect due to honnor data reporting the last succesful inspect... (needs to find something more elegant)
+		-- Honor data sometimes lags behind; re-inspect after short delay
 		C_Timer.After(0.5, function()
 			self:DoInspect(self.unit);
-		end)
+		end);
 	end
 end
 
