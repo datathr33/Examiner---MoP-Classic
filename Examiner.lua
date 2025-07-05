@@ -1,11 +1,11 @@
 local gtt = GameTooltip;
-
--- Create Examiner Frame
-local modName = ...;
-local ex = CreateFrame("Frame",modName,UIParent);
+local modName = "Examiner";
+local ex = CreateFrame("Frame", modName, UIParent);
 
 -- Global Chat Message Function
-function AzMsg(msg) DEFAULT_CHAT_FRAME:AddMessage(tostring(msg):gsub("|1","|cffffff80"):gsub("|2","|cffffffff"),0.5,0.75,1.0); end
+function AzMsg(msg)
+	DEFAULT_CHAT_FRAME:AddMessage(tostring(msg):gsub("|1", "|cffffff80"):gsub("|2", "|cffffffff"), 0.5, 0.75, 1.0);
+end
 
 -- Local Saved Tables
 local cfg, cache;
@@ -20,11 +20,11 @@ ex.unitStats = unitStats;
 ex.info = info;
 
 -- Misc Constants
-local HOOK_DEFAULT_INSPECT = true;	-- Hook Default Inspect Frame -- Az: Disable for debugging
+local HOOK_DEFAULT_INSPECT = true;
 local DELAYED_INSPECT_TIME = 1;
 local CLASSIFICATION_NAMES = {
 	worldboss = BOSS,
-	rareelite = ITEM_QUALITY3_DESC..ELITE,
+	rareelite = ITEM_QUALITY3_DESC .. ELITE,
 	elite = ELITE,
 	rare = ITEM_QUALITY3_DESC,
 };
@@ -35,13 +35,13 @@ local VERTEX_COLOR_CACHED = { 1, 1, 0.4 };
 local VERTEX_COLOR_LOADING = { 0.5, 1, 0.5 };
 local CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS;
 
--- Texture Mapping
+-- Talent Backgrounds (MoP Classic)
 local TALENT_BACKGROUNDS = {
 	"DeathKnightBlood", "DeathKnightFrost", "DeathKnightUnholy",
 	"DruidBalance", "DruidFeralCombat", "DruidRestoration",
 	"HunterBeastMastery", "HunterMarksmanship", "HunterSurvival",
---	"HunterPetCunning", "HunterPetFerocity", "HunterPetTenacity",
 	"MageArcane", "MageFire", "MageFrost",
+	"MonkBrewmaster", "MonkMistweaver", "MonkWindwalker",
 	"PaladinCombat", "PaladinHoly", "PaladinProtection",
 	"PriestDiscipline", "PriestHoly", "PriestShadow",
 	"RogueAssassination", "RogueCombat", "RogueSubtlety",
